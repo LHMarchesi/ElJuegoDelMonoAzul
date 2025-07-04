@@ -5,8 +5,10 @@ public class PlayerController : MonoBehaviour
     public bool enableInputs;
     public Rigidbody2D playerRb;
     [SerializeField] private float moveForce;
-    [SerializeField] private float jumpImpulse;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpUpBoost;
     [SerializeField] private float lateralBoost;
+    [SerializeField] private float extraDownForce;
     [SerializeField] private MonkeyHand[] monkeyHands;
     private bool isPlayerAttached;
 
@@ -16,6 +18,9 @@ public class PlayerController : MonoBehaviour
         {
             MoveSideWays();
             Jump();
+            Vector2 downforce = Vector2.down * extraDownForce;
+            playerRb.AddForce(downforce, ForceMode2D.Force);
+
         }
     }
 
@@ -33,21 +38,19 @@ public class PlayerController : MonoBehaviour
 
     private void MoveSideWays()
     {
-        float moveInput = Input.GetAxis("Horizontal");
         // Movimiento lateral base
+        float moveInput = Input.GetAxis("Horizontal");
         float horizontalSpeed = moveInput * moveForce;
 
-        // 🎯 Nueva parte: impulso vertical proporcional al movimiento horizontal
-        float upwardBoost = Mathf.Abs(moveInput) * 3f; // ← Ajustá el multiplicador según lo que necesites
+        // impulso vertical proporcional al movimiento horizontal
+        float upwardBoost = Mathf.Abs(moveInput) * jumpUpBoost;
 
         Vector2 targetVelocity = new Vector2(horizontalSpeed, playerRb.linearVelocityY + upwardBoost);
 
         playerRb.linearVelocity = Vector2.Lerp(playerRb.linearVelocity, targetVelocity, Time.fixedDeltaTime * 10f);
 
-        // Debug de velocidad lateral
+        // Debug
         Debug.DrawLine(playerRb.position, playerRb.position + new Vector2(playerRb.linearVelocity.x, 0), Color.cyan);
-
-        // Debug de impulso vertical
         Debug.DrawLine(playerRb.position, playerRb.position + new Vector2(0, upwardBoost), Color.red);
     }
 
@@ -59,7 +62,7 @@ public class PlayerController : MonoBehaviour
         {
             DetachMonkeyHands();
 
-            Vector2 upwardForce = Vector2.up * jumpImpulse;
+            Vector2 upwardForce = Vector2.up * jumpForce;
             float lateral = Mathf.Clamp(playerRb.linearVelocity.x, -1f, 1f) * lateralBoost;
             
             Vector2 totalJump = upwardForce + new Vector2(lateral, 0f);
