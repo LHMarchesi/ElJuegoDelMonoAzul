@@ -18,9 +18,15 @@ public class PlayerController : MonoBehaviour
         {
             MoveSideWays();
             Jump();
-            Vector2 downforce = Vector2.down * extraDownForce;
-            playerRb.AddForce(downforce, ForceMode2D.Force);
 
+            if (playerRb.linearVelocityY < 0 && !isPlayerAttached)
+            {
+                Vector2 downforce = Vector2.down * extraDownForce;
+                playerRb.AddForce(downforce, ForceMode2D.Force);
+
+                // Debug para visualizar la fuerza de caída
+                Debug.DrawLine(playerRb.position, playerRb.position + downforce * 0.1f, Color.blue);
+            }
         }
     }
 
@@ -62,10 +68,15 @@ public class PlayerController : MonoBehaviour
         {
             DetachMonkeyHands();
 
+            // Impulso vertical constante
             Vector2 upwardForce = Vector2.up * jumpForce;
-            float lateral = Mathf.Clamp(playerRb.linearVelocity.x, -1f, 1f) * lateralBoost;
-            
-            Vector2 totalJump = upwardForce + new Vector2(lateral, 0f);
+
+            // Impulso lateral basado en velocidad horizontal 
+            float lateralMomentum = Mathf.Clamp(playerRb.linearVelocityX, -1f, 1f); // no depende de magnitud
+            Vector2 lateralForce = Vector2.right * lateralMomentum * lateralBoost;
+
+            // Combinar sin que el lateral domine
+            Vector2 totalJump = upwardForce + lateralForce;
             playerRb.AddForce(totalJump, ForceMode2D.Impulse);
 
             Debug.DrawLine(playerRb.position, playerRb.position + totalJump, Color.green, 1f); //Debug line for jump force

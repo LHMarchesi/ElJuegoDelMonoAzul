@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class FlexibleUIButton : MonoBehaviour
 {
     [SerializeField] private ButtonAction actionType;
     [SerializeField] private string parameter;  // Can be a scene name, state name, etc.
+    [SerializeField] private AudioClip OnClickSfx;  // Can be a scene name, state name, etc.
 
     private Button button;
     private void Start()
@@ -37,6 +39,16 @@ public class FlexibleUIButton : MonoBehaviour
     /// </summary>
     private void PerformAction()
     {
+        if (OnClickSfx != null)
+            SoundManager.Instance.PlaySFX(OnClickSfx);
+
+        StartCoroutine(DelayedAction());
+    }
+
+    private IEnumerator DelayedAction()
+    {
+        yield return new WaitForSeconds(0.1f); // Espera para que suene el SFX (ajustable)
+
         switch (actionType)
         {
             case ButtonAction.ChangeState:
@@ -54,28 +66,26 @@ public class FlexibleUIButton : MonoBehaviour
 
                     case "Credits":
                         SceneManager.LoadScene(2);
-                     //   GameManager.Instance.ChangeState(new CreditsState());
                         break;
-
                 }
                 break;
 
             case ButtonAction.QuitGame:
-                Application.Quit();     // Only works in a built game, not in the editor
-                Debug.Log("Game Quit");
+                Application.Quit();
                 break;
 
             case ButtonAction.Resume:
-                Time.timeScale = 1;     // Unpause the game
+                Time.timeScale = 1;
                 GameManager.Instance.ChangeState(new GameplayState());
                 break;
 
             case ButtonAction.RestartGame:
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload the current scene
-                Time.timeScale = 1;     // Unpause the game
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                Time.timeScale = 1;
                 GameManager.Instance.ChangeState(new GameplayState());
                 break;
         }
-        button.interactable = false;         // disable the button after click to avoid double input
+
+        button.interactable = false;
     }
 }

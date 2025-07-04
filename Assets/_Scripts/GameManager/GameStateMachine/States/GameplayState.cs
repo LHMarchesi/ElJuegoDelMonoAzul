@@ -7,6 +7,11 @@ public class GameplayState : IGameState
     {
         // Called when entering the gameplay state
         // You can add logic here to initialize gameplay systems
+
+        if (!SoundManager.Instance.IsPlaying(SoundManager.Instance.levelMusic))
+        {
+            SoundManager.Instance.PlayMusic(SoundManager.Instance.levelMusic, true);
+        }
     }
 
     public void Update()

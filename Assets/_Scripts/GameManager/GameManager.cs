@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     // The game state machine managing different IGameState instances
     private GameStateMachine stateMachine;
     private IGameState currentState;
+  
 
     private void Awake()
     {
@@ -34,10 +35,10 @@ public class GameManager : MonoBehaviour
         switch (currentBuildIndex)  //
         {
             case 0: // Main Menu
-                currentState = new MainMenuState();
+                stateMachine.ChangeState(new MainMenuState());
                 break;
             case 1: // Game
-                currentState = new GameplayState();
+                stateMachine.ChangeState(new GameplayState());
                 break;
         }
         Debug.Log(currentState);
