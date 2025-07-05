@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpUpBoost;
     [SerializeField] private float lateralBoost;
     [SerializeField] private float extraDownForce;
+    [SerializeField] private float airControl;
     [SerializeField] private MonkeyHand[] monkeyHands;
     private bool isPlayerAttached;
 
@@ -44,20 +45,26 @@ public class PlayerController : MonoBehaviour
 
     private void MoveSideWays()
     {
-        // Movimiento lateral base
+
         float moveInput = Input.GetAxis("Horizontal");
-        float horizontalSpeed = moveInput * moveForce;
 
-        // impulso vertical proporcional al movimiento horizontal
-        float upwardBoost = Mathf.Abs(moveInput) * jumpUpBoost;
+        if (isPlayerAttached)
+        {
+            float horizontalSpeed = moveInput * moveForce;
+            float upwardBoost = Mathf.Abs(moveInput) * jumpUpBoost;
 
-        Vector2 targetVelocity = new Vector2(horizontalSpeed, playerRb.linearVelocityY + upwardBoost);
+            Vector2 targetVelocity = new Vector2(horizontalSpeed, playerRb.linearVelocityY + upwardBoost);
+            playerRb.linearVelocity = Vector2.Lerp(playerRb.linearVelocity, targetVelocity, Time.fixedDeltaTime * 10f);
 
-        playerRb.linearVelocity = Vector2.Lerp(playerRb.linearVelocity, targetVelocity, Time.fixedDeltaTime * 10f);
-
-        // Debug
-        Debug.DrawLine(playerRb.position, playerRb.position + new Vector2(playerRb.linearVelocity.x, 0), Color.cyan);
-        Debug.DrawLine(playerRb.position, playerRb.position + new Vector2(0, upwardBoost), Color.red);
+            Debug.DrawLine(playerRb.position, playerRb.position + new Vector2(playerRb.linearVelocity.x, 0), Color.cyan);
+            Debug.DrawLine(playerRb.position, playerRb.position + new Vector2(0, upwardBoost), Color.red);
+        }
+        else
+        {
+            // Control en el aire limitado: solo aplicar fuerza si se está moviendo
+            float airControlForce = moveInput * moveForce * airControl;
+            playerRb.AddForce(Vector2.right * airControlForce, ForceMode2D.Force);
+        }
     }
 
     private void Jump()

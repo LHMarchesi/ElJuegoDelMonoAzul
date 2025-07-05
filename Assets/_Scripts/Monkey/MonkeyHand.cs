@@ -45,14 +45,14 @@ public class MonkeyHand : MonoBehaviour
             }
         }
 
-
     }
+
     private void Update()
     {
         if (attachCooldownTimer > 0)
             attachCooldownTimer -= Time.deltaTime;
     }
- 
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (isAttached || attachCooldownTimer > 0f || CurrentlyAttachedHand != null)

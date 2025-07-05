@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      monkey leg 2_0: 8375593402106970340
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

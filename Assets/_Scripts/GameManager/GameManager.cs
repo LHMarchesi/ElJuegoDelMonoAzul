@@ -13,9 +13,6 @@ public class GameManager : MonoBehaviour
 
     // The game state machine managing different IGameState instances
     private GameStateMachine stateMachine;
-    private IGameState currentState;
-  
-
     private void Awake()
     {
         // Ensure there's only one instance of GameManager (Singleton pattern)
@@ -41,7 +38,6 @@ public class GameManager : MonoBehaviour
                 stateMachine.ChangeState(new GameplayState());
                 break;
         }
-        Debug.Log(currentState);
     }
 
     private void Update()
