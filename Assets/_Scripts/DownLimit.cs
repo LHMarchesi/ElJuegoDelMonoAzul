@@ -5,6 +5,14 @@ public class DownLimit : MonoBehaviour
     [SerializeField] Transform spawnPoint;
     [SerializeField] float waterSpeed;
     [SerializeField] bool isWaterRising;
+    [SerializeField] AudioClip SplashOnWater;
+    private bool hasPlayedSound;
+
+    private void Awake()
+    {
+        hasPlayedSound = false;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("PlayerHead"))
@@ -17,9 +25,11 @@ public class DownLimit : MonoBehaviour
             controller.playerRb.linearDamping = 100f;
 
             UIManager.Instance.SetGameOver(true); // Show game over UI
+            SoundManager.Instance.PlaySFX(SplashOnWater);
+            if (!hasPlayedSound)
+                hasPlayedSound = true;
         }
     }
-
     private void Update()
     {
         if (isWaterRising)

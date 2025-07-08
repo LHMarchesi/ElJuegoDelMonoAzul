@@ -15,13 +15,8 @@ public class OvniWinCondition : MonoBehaviour
             Animator animator = GetComponent<Animator>();
             animator.SetTrigger("TriggerWin");
 
-            foreach (Transform child in collision.transform)
-            {
-                child.gameObject.SetActive(false);
-            }
-
-            collision.gameObject.SetActive(false);
-           
+            PlayerController playerController = collision.GetComponentInParent<PlayerController>();
+            playerController.OnWin?.Invoke();
 
             StartCoroutine(DelayedWin());
         }

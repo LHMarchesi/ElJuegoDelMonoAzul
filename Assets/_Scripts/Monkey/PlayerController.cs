@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,6 +14,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airControl;
     [SerializeField] private MonkeyHand[] monkeyHands;
     private bool isPlayerAttached;
+
+    public Action OnWin;
+    [SerializeField] private List<AudioClip> JumpSounds;
+
+    private void Awake()
+    {
+        OnWin += Desactivate;
+    }
 
     void FixedUpdate()
     {
@@ -73,6 +83,8 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetButton("Jump") && isPlayerAttached)
         {
+
+            SoundManager.Instance.PlaySFX(JumpSounds[UnityEngine.Random.Range(0, JumpSounds.Count)]);
             DetachMonkeyHands();
 
             // Impulso vertical constante
@@ -102,5 +114,17 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private void Desactivate()
+    {
+        DetachMonkeyHands();
+        enableInputs = false;
+        gameObject.SetActive(false);
+    }
+
     public void SetPosition(Vector3 position) { playerRb.MovePosition(position); }
+
+    private void OnDisable()
+    {
+        OnWin -= Desactivate; 
+    }
 }
